@@ -4,9 +4,16 @@ const router = express.Router()
 const Note = require("../models/note")
 
 router.post("/", async (req, res) => {
-  const note = new Note(req.body)
-  await note.save()
-  return res.send(note)
+  try {
+    const note = new Note(req.body)
+    const save = await note.save()
+    if (!save) {
+      return res.status(500).send({ message: "Note not saved" })
+    }
+    return res.status(200).send(note)
+  } catch (error) {
+    return res.send(error)
+  }
 })
 
 router.get("/", async (req, res) => {
@@ -15,7 +22,7 @@ router.get("/", async (req, res) => {
     if (!notes) {
       return res.status(404).send({ message: "Note not found" })
     }
-    return res.send(notes)
+    return res.status(200).send(notes)
   } catch (error) {
     return res.send(error)
   }
@@ -27,7 +34,7 @@ router.get("/:id", async (req, res) => {
     if (!note) {
       return res.status(404).send({ message: "Note not found" })
     }
-    return res.send(note)
+    return res.status(200).send(note)
   } catch (error) {
     return res.send(error)
   }
@@ -39,7 +46,7 @@ router.put("/:id", async (req, res) => {
     if (!note) {
       return res.status(404).send({ message: "Note not found" })
     }
-    return res.send(note)
+    return res.status(200).send(note)
   } catch (error) {
     return res.send(error)
   }
@@ -51,7 +58,7 @@ router.delete("/:id", async (req, res) => {
     if (!note) {
       return res.status(404).send({ message: "Note not found" })
     }
-    return res.send({ message: "Note deleted" })
+    return res.status(200).send({ message: "Note deleted" })
   } catch (error) {
     return res.send(error)
   }
